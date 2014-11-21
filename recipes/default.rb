@@ -22,3 +22,11 @@ include_recipe "git"
 chef_gem 'homesick' do
   version node['homesick']['gem_version'] if node['homesick']['gem_version']
 end
+
+Array(node['homesick']['castles']).each do |castle|
+  homesick_castle castle['name'] do
+    user    u['id']
+    source  castle['source']         if castle['source']
+    action  castle['action'].to_sym  if castle['action']
+  end
+end
