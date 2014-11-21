@@ -25,7 +25,7 @@ end
 
 Array(node['homesick']['castles']).each do |castle|
   homesick_castle castle['name'] do
-    user    u['id']
+    user    castle['user']
     source  castle['source']         if castle['source']
     action  castle['action'].to_sym  if castle['action']
   end
