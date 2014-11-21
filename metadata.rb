@@ -14,4 +14,4 @@ supports "mac_os_x"
 supports "openbsd"
 supports "suse"
 
-depends "git"
+depends 'rbenv'

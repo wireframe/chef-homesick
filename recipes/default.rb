@@ -17,16 +17,38 @@
 # limitations under the License.
 #
 
-include_recipe "git"
+include_recipe 'rbenv'
 
-chef_gem 'homesick' do
-  version node['homesick']['gem_version'] if node['homesick']['gem_version']
+global_rbenv = node['rbenv']['user_installs'].find {|v| v['global'] }
+
+rbenv_gem 'homesick' do
+  user(global_rbenv['user'])
+  root_path(global_rbenv['root_path']) if global_rbenv['root_path']
+  version(node['homesick']['gem_version']) if node['homesick']['gem_version']
+  rbenv_version global_rbenv['global']
+  action :install
 end
 
 Array(node['homesick']['castles']).each do |castle|
-  homesick_castle castle['name'] do
-    user    castle['user']
-    source  castle['source']         if castle['source']
-    action  castle['action'].to_sym  if castle['action']
+  rbenv_script "clone castle #{castle['name']}" do
+    rbenv_version global_rbenv['global']
+    user          global_rbenv['user']
+    root_path     global_rbenv['root_path'] if global_rbenv['root_path']
+    cwd           global_rbenv['root_path'] if global_rbenv['root_path']
+    code          %{homesick clone #{castle['source']}}
+  end
+  rbenv_script "pull castle #{castle['name']}" do
+    rbenv_version global_rbenv['global']
+    user          global_rbenv['user']
+    root_path     global_rbenv['root_path'] if global_rbenv['root_path']
+    cwd           global_rbenv['root_path'] if global_rbenv['root_path']
+    code          %{homesick pull #{castle['source']}}
+  end
+  rbenv_script "symlink castle #{castle['name']}" do
+    rbenv_version global_rbenv['global']
+    user          global_rbenv['user']
+    root_path     global_rbenv['root_path'] if global_rbenv['root_path']
+    cwd           global_rbenv['root_path'] if global_rbenv['root_path']
+    code          %{homesick symlink #{castle['source']}}
   end
 end

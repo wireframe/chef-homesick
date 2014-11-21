@@ -21,4 +21,4 @@
 
 default['homesick']['castles'] = []
 
-default['homesick']['gem_version'] = '~> 0.7.0'
+default['homesick']['gem_version'] = nil
